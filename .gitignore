@@ -45,6 +45,7 @@ bin/
 gen/
 out/
 build/
+xml/
 
 # Eclipse project files
 .classpath
