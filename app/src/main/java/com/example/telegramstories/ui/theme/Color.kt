@@ -12,3 +12,6 @@ val Pink40 = Color(0xFF7D5260)
 
 val TelegramAccentBlue = Color(0xFF4A7CA5)
 val TelegramActionBlue = Color(0xFF03A9F4)
+val TelegramGreen = Color(0xFF00FFA6)
+
+val TelegramStoryBorderGradient = listOf(TelegramGreen, TelegramActionBlue, TelegramGreen, TelegramActionBlue)
