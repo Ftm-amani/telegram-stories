@@ -1,7 +1,9 @@
-package com.example.telegramstories.ui
+package com.example.telegramstories.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +47,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.telegramstories.R
+import com.example.telegramstories.data.Story
+import com.example.telegramstories.ui.home.story.StoriesSection
+import com.example.telegramstories.ui.home.story.StoryItem
 import com.example.telegramstories.ui.theme.TelegramAccentBlue
 import com.example.telegramstories.ui.theme.TelegramActionBlue
 
@@ -55,6 +60,7 @@ fun TelegramFirstScreen() {
     val isFabVisible by remember { mutableStateOf(true) }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("All", "Channels", "Unread")
+    var isStoriesVisible by remember { mutableStateOf(false) }
 
     Box {
         Column(
@@ -63,8 +69,31 @@ fun TelegramFirstScreen() {
             TopAppBar(
                 title = {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
+
+                        if (!isStoriesVisible) {
+                            // Small story icon in app bar
+                            Box(contentAlignment = Alignment.Center,
+                                modifier = Modifier.clickable {
+                                    isStoriesVisible = !isStoriesVisible
+                                }) {
+
+                                StoryItem(
+                                    story = Story(
+                                        id = 1,
+                                        userName = "",
+                                        avatar = R.drawable.avatar_telegram
+                                    ),
+                                    size = 50,
+                                    isTextVisible = false
+                                )
+                            }
+                        }
+                        // Spacer for spacing between icon and title
+                        Spacer(modifier = Modifier.width(8.dp))
+
                         Text(
                             text = "Telegram",
                             style = MaterialTheme.typography.titleLarge,
@@ -99,6 +128,11 @@ fun TelegramFirstScreen() {
                     actionIconContentColor = Color.White,
                 )
             )
+
+            // Stories section (visible only when isStoriesVisible is true)
+            if (isStoriesVisible) {
+                StoriesSection()
+            }
 
             // TabView
             TabRow(
@@ -147,7 +181,9 @@ fun TelegramFirstScreen() {
             FloatingActionButton(
                 shape = CircleShape,
                 containerColor = TelegramActionBlue,
-                onClick = {},
+                onClick = {
+                    // todo Handle FloatingActionButton click
+                },
                 modifier = Modifier
                     .padding(16.dp)
                     .size(60.dp)

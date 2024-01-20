@@ -38,7 +38,11 @@ import com.example.telegramstories.ui.theme.TelegramAccentBlue
 import com.example.telegramstories.ui.theme.TelegramStoryBorderGradient
 
 @Composable
-fun StoryItem(story: Story) {
+fun StoryItem(
+    story: Story,
+    size: Int,
+    isTextVisible:Boolean
+) {
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -47,13 +51,13 @@ fun StoryItem(story: Story) {
         Box {
             Box(
                 Modifier
-                    .height(60.dp)
-                    .width(60.dp)
+                    .height(size.dp)
+                    .width(size.dp)
                     .padding(5.dp)
                     .border(
                         shape = CircleShape,
                         border = BorderStroke(
-                            width = 1.dp,
+                            width = 2.dp,
                             brush = Brush.linearGradient(
                                 colors = TelegramStoryBorderGradient,
                                 start = Offset(
@@ -69,11 +73,12 @@ fun StoryItem(story: Story) {
                     ),
                 contentAlignment = Alignment.Center
             ) {
+                val decreasedSize = size - 20
                 Image(
                     painter = painterResource(id = story.avatar),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(45.dp)
+                        .size(decreasedSize.dp)
                         .clip(CircleShape)
                 )
             }
@@ -92,18 +97,23 @@ fun StoryItem(story: Story) {
                 )
         }
 
-        Text(
-            text = if (story.userName == "me") "My Story" else story.userName,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center
-        )
+        if (isTextVisible) {
+            Text(
+                text = if (story.userName == "me") "My Story" else story.userName,
+                color = Color.White,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
 @Composable
 fun StoriesSection() {
     Box(
-        Modifier.background(color = TelegramAccentBlue)
+        Modifier
+            .background(color = TelegramAccentBlue)
+            .padding(4.dp)
     ) {
         LazyRow(
             modifier = Modifier
@@ -111,7 +121,11 @@ fun StoriesSection() {
                 .wrapContentHeight()
         ) {
             items(DummyData.storyList) {
-                StoryItem(it)
+                StoryItem(
+                    story = it,
+                    size = 60,
+                    isTextVisible = true
+                )
             }
         }
     }
