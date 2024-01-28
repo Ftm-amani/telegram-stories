@@ -42,11 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.telegramstories.R
+import com.example.telegramstories.data.DummyData.messages
+import com.example.telegramstories.data.Message
 import com.example.telegramstories.data.Story
 import com.example.telegramstories.ui.home.story.StoriesSection
 import com.example.telegramstories.ui.home.story.StoryItem
@@ -202,7 +203,7 @@ fun TelegramFirstScreen() {
 }
 
 @Composable
-fun MessageItem(message: String) {
+fun MessageItem(message: Message) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,34 +213,23 @@ fun MessageItem(message: String) {
 
         // User image
         Image(
-            painter = painterResource(id = R.drawable.ic_person),
+            painter = painterResource(id = message.avatar),
             contentDescription = "User Image",
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
-                .background(Color.Green),
-            colorFilter = ColorFilter.tint(Color.LightGray)
+                .background(message.backgroundColor),
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
         // Message content
         Column {
-            Text(text = "User Name", style = MaterialTheme.typography.labelSmall)
-            Text(text = message, style = MaterialTheme.typography.bodyMedium)
+            Text(text = message.userName, style = MaterialTheme.typography.labelSmall)
+            Text(text = message.text, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
-
-// Sample data
-val messages = listOf(
-    "Hello, how are you?",
-    "What's up?",
-    "Let's meet tomorrow.",
-    "Check out this cool app!",
-    "Just wanted to say hi!",
-    "How's your day going?"
-)
 
 @Composable
 fun ChatsContent() {
