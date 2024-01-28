@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.telegramstories.data.DummyData
 import com.example.telegramstories.data.Story
 import com.example.telegramstories.ui.theme.TelegramAccentBlue
@@ -100,6 +101,7 @@ fun StoryItem(
         if (isTextVisible) {
             Text(
                 text = if (story.userName == "me") "My Story" else story.userName,
+                fontSize = 8.sp,
                 color = Color.White,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
@@ -113,7 +115,6 @@ fun StoriesSection() {
     Box(
         Modifier
             .background(color = TelegramAccentBlue)
-            .padding(4.dp)
     ) {
         LazyRow(
             modifier = Modifier
