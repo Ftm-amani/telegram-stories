@@ -124,7 +124,7 @@ fun StoriesSection() {
             items(DummyData.storyList) {
                 StoryItem(
                     story = it,
-                    size = 60,
+                    size = 56,
                     isTextVisible = true
                 )
             }
