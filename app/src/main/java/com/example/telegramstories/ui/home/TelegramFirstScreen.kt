@@ -2,12 +2,12 @@ package com.example.telegramstories.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,18 +21,22 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,9 +46,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.telegramstories.R
 import com.example.telegramstories.data.DummyData.messages
 import com.example.telegramstories.data.Message
@@ -62,54 +68,79 @@ fun TelegramFirstScreen() {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("All", "Channels", "Unread")
     var isStoriesVisible by remember { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.5 } }
+    val topAppBarElementColor = Color.White
+    val collapsed = 22
+    val expanded = 24
+    val topAppBarTextSize =
+        (collapsed + (expanded - collapsed) * (1 - scrollBehavior.state.collapsedFraction)).sp
 
-    Box {
-        Column(
-            modifier = Modifier
-        ) {
-            TopAppBar(
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
                 title = {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        if (isCollapsed.value) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+
+                                if (isCollapsed.value) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        StoryItem(
+                                            story = Story(
+                                                id = 1,
+                                                userName = "",
+                                                avatar = R.drawable.avatar
+                                            ),
+                                            size = 50,
+                                            isTextVisible = false
+                                        )
+                                    }
+
+                                    // Spacer for spacing between icon and title
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Text(
+                                        text = "Telegram",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(4.dp),
+                                        fontSize = topAppBarTextSize
+                                    )
+                                }
+                            }
+                        } else if (!isCollapsed.value) {
+                            StoriesSection()
+                        }
+
+                    }
+                },
+                navigationIcon = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-
-                        if (!isStoriesVisible) {
-                            // Small story icon in app bar
-                            Box(contentAlignment = Alignment.Center,
-                                modifier = Modifier.clickable {
-                                    isStoriesVisible = !isStoriesVisible
-                                }) {
-
-                                StoryItem(
-                                    story = Story(
-                                        id = 1,
-                                        userName = "",
-                                        avatar = R.drawable.avatar_telegram
-                                    ),
-                                    size = 50,
-                                    isTextVisible = false
-                                )
-                            }
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Toggle drawer"
+                            )
                         }
-                        // Spacer for spacing between icon and title
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Text(
-                            text = "Telegram",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(4.dp)
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Toggle drawer"
-                        )
+                        if (!isCollapsed.value) {
+                            Text(
+                                text = "Telegram",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(4.dp),
+                                fontSize = topAppBarTextSize
+                            )
+                        }
                     }
                 },
                 actions = {
@@ -121,85 +152,87 @@ fun TelegramFirstScreen() {
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
+                scrollBehavior = scrollBehavior,
+                windowInsets = WindowInsets(0.dp),
+                colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = TelegramAccentBlue,
-                    scrolledContainerColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    titleContentColor = Color.White,
-                    actionIconContentColor = Color.White,
-                )
+                    scrolledContainerColor = TelegramAccentBlue,
+                    navigationIconContentColor = topAppBarElementColor,
+                    titleContentColor = topAppBarElementColor,
+                    actionIconContentColor = topAppBarElementColor,
+                ),
             )
-
-            // Stories section (visible only when isStoriesVisible is true)
-            if (isStoriesVisible) {
-                StoriesSection()
-            }
-
-            // TabView
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                modifier = Modifier
-                    .fillMaxWidth(),
-
-                contentColor = Color.White,
-                containerColor = TelegramAccentBlue,
-                indicator = { tabPositions ->
-                    TabRowDefaults
-                        .Indicator(
-                            modifier = Modifier
-                                .tabIndicatorOffset(tabPositions[selectedTabIndex])
-                                .padding(start = 30.dp, end = 30.dp)
-                                .clip(shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
-                            color = Color.White,
-                            height = 4.dp,
-                        )
-                },
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = {
-                            selectedTabIndex = index
-                        },
-                        content = {
-                            Text(
-                                text = title,
-                                modifier = Modifier.padding(bottom = 10.dp)
-                            )
-                        }
+        },
+        floatingActionButton = {
+            if (isFabVisible) {
+                FloatingActionButton(
+                    shape = CircleShape,
+                    containerColor = TelegramActionBlue,
+                    onClick = {
+                        // todo Handle FloatingActionButton click
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(60.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Create, contentDescription = "Compose",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(30.dp)
                     )
                 }
             }
+        },
+        floatingActionButtonPosition = FabPosition.End,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        content = { innerPadding ->
+            Column {
 
-            when (selectedTabIndex) {
-                0 -> ChatsContent()
-                1 -> ChannelsContent()
-                2 -> UnreadContent()
-            }
-        }
-
-        if (isFabVisible) {
-            FloatingActionButton(
-                shape = CircleShape,
-                containerColor = TelegramActionBlue,
-                onClick = {
-                    // todo Handle FloatingActionButton click
-                },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .size(60.dp)
-                    .align(Alignment.BottomEnd)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Create, contentDescription = "Compose",
-                    tint = Color.White,
+                TabRow(
+                    selectedTabIndex = selectedTabIndex,
                     modifier = Modifier
-                        .size(30.dp)
-                )
+                        .fillMaxWidth()
+                        .padding(innerPadding),
+
+                    contentColor = Color.White,
+                    containerColor = TelegramAccentBlue,
+                    indicator = { tabPositions ->
+                        TabRowDefaults
+                            .Indicator(
+                                modifier = Modifier
+                                    .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                                    .padding(start = 30.dp, end = 30.dp)
+                                    .clip(shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
+                                color = Color.White,
+                                height = 4.dp,
+                            )
+                    },
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = {
+                                selectedTabIndex = index
+                            },
+                            content = {
+                                Text(
+                                    text = title,
+                                    modifier = Modifier.padding(bottom = 10.dp)
+                                )
+                            }
+                        )
+                    }
+                }
+
+                when (selectedTabIndex) {
+                    0 -> ChatsContent()
+                    1 -> ChannelsContent()
+                    2 -> UnreadContent()
+                }
             }
         }
-
-    }
+    )
 }
 
 @Composable
