@@ -96,7 +96,7 @@ fun TelegramFirstScreen() {
                                             story = Story(
                                                 id = 1,
                                                 userName = "",
-                                                avatar = R.drawable.avatar
+                                                avatar = R.drawable.avatar_me
                                             ),
                                             size = 50,
                                             isTextVisible = false

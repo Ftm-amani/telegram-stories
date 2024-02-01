@@ -8,7 +8,7 @@ object DummyData {
         Story(
             id = 1,
             userName = "me",
-            avatar = R.drawable.avatar_1
+            avatar = R.drawable.avatar_me
         )
 
     val storyList = listOf(
